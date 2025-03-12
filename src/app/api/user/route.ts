@@ -1,22 +1,21 @@
 import { db } from "@/lib/db";
-import { NextResponse } from "next/server";
 import { hash } from "bcryptjs";
+import { NextResponse } from "next/server";
 import { z } from "zod";
-import jwt from "jsonwebtoken";
 
 const userSchema = z.object({
-  username: z.string().min(2, "Name must be at least 2 characters"),
+  username: z.string().min(2, "Username must be at least 2 characters"),
+  name: z.string().min(2, "Full name must be at least 2 characters"),
   email: z.string().email("Enter a valid email"),
   password: z.string().min(6, "Password must be at least 6 characters"),
 });
 
-const JWT_SECRET = process.env.JWT_SECRET || "test";
-
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const { email, username, password } = userSchema.parse(body);
+    const { email, username, name, password } = userSchema.parse(body);
 
+    // 🔍 Check if user exists
     const existingUser = await db.user.findFirst({
       where: {
         OR: [{ email: email }, { username: username }],
@@ -36,21 +35,18 @@ export async function POST(req: Request) {
       );
     }
 
+    // 🔐 Hash password
     const hashedPassword = await hash(password, 10);
 
+    // ✅ Create new user
     const newUser = await db.user.create({
       data: {
         email,
         username,
+        name: name,
         password: hashedPassword,
       },
     });
-
-    const token = jwt.sign(
-      { id: newUser.id, username: newUser.username, email: newUser.email },
-      JWT_SECRET,
-      { expiresIn: "1h" }
-    );
 
     const response = NextResponse.json(
       {
@@ -59,8 +55,6 @@ export async function POST(req: Request) {
       },
       { status: 201 }
     );
-
-    response.cookies.set("token", token);
 
     return response;
   } catch (error) {

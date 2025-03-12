@@ -15,7 +15,8 @@ import { toast } from "sonner";
 
 const formSchema = z
   .object({
-    name: z.string().min(2, "Name is required"),
+    fullName: z.string().min(2, "Full name is required"),
+    username: z.string().min(2, "Username is required"),
     email: z.string().email("Invalid email").min(2, "Email is required"),
     password: z.string().min(2, "Password is required").max(50),
     confirmPassword: z.string().min(2, "Confirm password is required"),
@@ -37,42 +38,39 @@ export function RegisterForm({
   } = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
+      fullName: "",
+      username: "",
       email: "",
       password: "",
-      name: "",
       confirmPassword: "",
     },
   });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    const data = {
-      username: values.name,
-      email: values.email,
-      password: values.password,
-    };
-
     try {
-      const response = await axios.post("/api/auth/register", data);
-      if (response.status === 201) {
-        router.push("/");
-      } else {
-        console.log("Something went wrong!");
-      }
-    } catch (error : any) {
-      if (error.response) {
-        if (error.response.status === 409) {
-          const errorMessage = error.response.data.message;
-          toast.error(errorMessage);
-        } else {
-          toast.error("An error occurred. Please try again later.");
-        }
-      } else if (error.request) {
-        toast.error("No response from server. Please check your connection.");
-      } else {
-        toast.error("Something went wrong!");
-      }
+      const response = await axios.post("/api/user", {
+        username: values.username,
+        email: values.email,
+        name: values.fullName,
+        password: values.password,
+      });
 
-      console.error("Error during registration", error);
+      if (response.status === 201) {
+        router.push("/login");
+        console.log("User registered successfully!");
+      } else {
+        console.error("Registration failed");
+      }
+    } catch (error: unknown) {
+      // Ensure error is properly typed as AxiosError
+      if (axios.isAxiosError(error)) {
+        console.error(
+          "Registration failed:",
+          error.response?.data?.message || error.message
+        );
+      } else {
+        console.error("Unexpected error:", error);
+      }
     }
   }
 
@@ -90,16 +88,30 @@ export function RegisterForm({
               </div>
 
               <div className="grid gap-3">
-                <Label htmlFor="name">Full Name</Label>
+                <Label htmlFor="fullName">Full Name</Label>
                 <Input
-                  id="name"
+                  id="fullName"
                   type="text"
                   placeholder="John Doe"
-                  {...register("name")}
+                  {...register("fullName")}
                   required
                 />
-                {errors.name && (
-                  <p className="text-red-500">{errors.name.message}</p>
+                {errors.fullName && (
+                  <p className="text-red-500">{errors.fullName.message}</p>
+                )}
+              </div>
+
+              <div className="grid gap-3">
+                <Label htmlFor="username">Username</Label>
+                <Input
+                  id="username"
+                  type="text"
+                  placeholder="johndoe123"
+                  {...register("username")}
+                  required
+                />
+                {errors.username && (
+                  <p className="text-red-500">{errors.username.message}</p>
                 )}
               </div>
 

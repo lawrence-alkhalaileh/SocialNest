@@ -18,7 +18,7 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { FaGoogle } from "react-icons/fa";
 import Link from "next/link";
-import axios from "axios";
+import { signIn } from "next-auth/react";
 
 const formSchema = z.object({
   email: z.string().email("Invalid email").min(2, "Email is required"),
@@ -43,43 +43,16 @@ export function LoginForm({
   });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    const data = {
+    const signInData = await signIn("credentials", {
       email: values.email,
       password: values.password,
-    };
-    try {
-      const response = await axios.post("/api/auth/login", data);
-
-      // Check if the login is successful
-      if (response.status === 200) {
-        router.push("/"); // Redirect to the homepage on successful login
-      } else {
-        // Handle unexpected status codes
-        toast.error("Unexpected error occurred. Please try again.");
-      }
-    } catch (error : any) {
-      if (error.response) {
-        if (error.response.status === 401) {
-          if (error.response.data.message === "Invalid email or password") {
-            toast.error("Invalid email or password!");
-          } else {
-            toast.error("Authentication error. Please try again.");
-          }
-        } else if (
-          error.response.status >= 400 &&
-          error.response.status < 500
-        ) {
-          toast.error("Request error. Please check your input and try again.");
-        } else if (error.response.status >= 500) {
-          toast.error("Server error. Please try again later.");
-        }
-      } else if (error.request) {
-        toast.error("No response from server. Please try again later.");
-      } else {
-        toast.error("An unknown error occurred. Please try again.");
-      }
-
-      console.error("Error during login", error);
+      redirect: false,
+    });
+    console.log(signInData?.ok);
+    if (signInData?.error) {
+      toast.error(signInData.error);
+    } else if (signInData?.ok) {
+      router.push("/");
     }
   }
 

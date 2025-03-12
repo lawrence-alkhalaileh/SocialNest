@@ -1,4 +1,6 @@
 import Navbar from "@/components/Navbar";
+import Sidebar from "@/components/sidebar/Sidebar";
+
 
 export default function HomeLayout({
   children,
@@ -10,7 +12,7 @@ export default function HomeLayout({
         <div className="max-w-7xl mx-auto px-4">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
             <div className="hidden lg:block lg:col-span-3">
-              <h1>side bar</h1>
+              <Sidebar />
             </div>
             <div className="lg:col-span-9">{children}</div>
           </div>
