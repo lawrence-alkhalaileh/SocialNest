@@ -48,7 +48,6 @@ export function LoginForm({
       password: values.password,
       redirect: false,
     });
-    console.log(signInData?.ok);
     if (signInData?.error) {
       toast.error(signInData.error);
     } else if (signInData?.ok) {

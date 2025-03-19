@@ -1,3 +1,4 @@
 {
-  "cSpell.words": ["cuid"]
+  "cSpell.words": ["cuid"],
+  "postman.settings.dotenv-detection-notification-visibility": false
 }

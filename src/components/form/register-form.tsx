@@ -57,7 +57,6 @@ export function RegisterForm({
 
       if (response.status === 201) {
         router.push("/login");
-        console.log("User registered successfully!");
       } else {
         console.error("Registration failed");
       }

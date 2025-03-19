@@ -33,7 +33,6 @@ export const authOptions: NextAuthOptions = {
           where: { email: credentials.email },
         });
 
-        console.log(existingUser);
 
         if (!existingUser) {
           throw new Error("No user found with this email.");
@@ -75,7 +74,7 @@ export const authOptions: NextAuthOptions = {
         user: {
           username: token.username,
           id: token.id,
-          image: token.image,
+          image: token.image || 'https://cdn.wallpapersafari.com/81/41/mDOY7h.jpg',
         },
       };
     },

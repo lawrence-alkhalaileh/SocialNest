@@ -8,7 +8,6 @@ import SignOut from "./ui/SignOut";
 
 async function DesktopNavbar() {
   const session = await getServerSession(authOptions);
-  console.log(session?.user)
 
   return (
     <div className="hidden md:flex items-center space-x-4">

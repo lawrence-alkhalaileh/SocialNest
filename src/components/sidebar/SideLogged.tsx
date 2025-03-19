@@ -22,7 +22,7 @@ const SideLogged: FC<SidebarProps> = ({ user }) => {
               <Avatar className="w-20 h-20 border-2 ">
                 <AvatarImage
                   src={
-                    user.image ||
+                    user.image ??
                     "https://cdn.wallpapersafari.com/81/41/mDOY7h.jpg"
                   }
                 />
