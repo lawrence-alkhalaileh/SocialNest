@@ -10,14 +10,12 @@ import { Avatar, AvatarImage } from "./ui/avatar";
 const SuggestUsers = async () => {
   const session = await getServerSession(authOptions);
   let users;
-
   if (session?.user?.id) {
     const id = session.user.id;
     users = await getRandomUsers(id);
   } else {
     return null;
   }
-
   return (
     <Card>
       <CardHeader>
@@ -36,7 +34,7 @@ const SuggestUsers = async () => {
                     <AvatarImage src={user.image ?? "https://cdn.wallpapersafari.com/81/41/mDOY7h.jpg"} />
                   </Avatar>
                 </Link>
-                <div className="text-xm pl-2 leading-5">
+                <div className="text-1xl pl-2 leading-5">
                   <Link
                     href={`/profile/${user.username}`}
                     className="font-medium cursor-pointer"
@@ -49,7 +47,7 @@ const SuggestUsers = async () => {
                   </p>
                 </div>
               </div>
-              <FollowButton userId={user.id} />
+              <FollowButton targetUserId={user.id} userId={session.user.id}/>
             </div>
           ))}
         </div>
@@ -57,5 +55,4 @@ const SuggestUsers = async () => {
     </Card>
   );
 };
-
 export default SuggestUsers;

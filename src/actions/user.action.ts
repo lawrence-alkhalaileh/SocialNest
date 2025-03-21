@@ -1,6 +1,8 @@
 "use server";
 
 import { prisma } from "@/lib/db";
+import { revalidatePath } from "next/cache";
+import { use } from "react";
 
 export async function getUserById(id: string) {
   return prisma.user.findUnique({
@@ -54,5 +56,51 @@ export async function getRandomUsers(id: any) {
   } catch (err) {
     console.error("Error fetching users:", err);
     return [];
+  }
+}
+
+export async function toggleFollow(targetUser: string, userId: string) {
+  try {
+    if (userId === targetUser) return new Error("You cannot follow yourself !");
+    const existingFollow = await prisma.follows.findUnique({
+      where: {
+        followerId_followingId: {
+          followerId: userId,
+          followingId: targetUser,
+        },
+      },
+    });
+
+    if (existingFollow) {
+      await prisma.follows.delete({
+        where: {
+          followerId_followingId: {
+            followerId: userId,
+            followingId: targetUser,
+          },
+        },
+      });
+    } else {
+      await prisma.$transaction([
+        prisma.follows.create({
+          data: {
+            followerId: userId,
+            followingId: targetUser,
+          },
+        }),
+        prisma.notification.create({
+          data: {
+            type: "FOLLOW",
+            userId: targetUser,
+            creatorId: userId,
+          },
+        }),
+      ]);
+    }
+    revalidatePath("/");
+    return { success: true };
+  } catch (error) {
+    console.error(error);
+    return { success: false };
   }
 }
