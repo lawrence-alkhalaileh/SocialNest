@@ -31,7 +31,7 @@ const SuggestUsers = async () => {
               <div className="flex items-center gap-1">
                 <Link href={`/profile/${user.username}`}>
                   <Avatar className="w-12 h-12">
-                    <AvatarImage src={user.image ?? "https://cdn.wallpapersafari.com/81/41/mDOY7h.jpg"} />
+                    <AvatarImage src={user.image ?? "/avatar.png"} />
                   </Avatar>
                 </Link>
                 <div className="text-1xl pl-2 leading-5">

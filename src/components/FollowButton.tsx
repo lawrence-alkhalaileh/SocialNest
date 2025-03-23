@@ -11,18 +11,17 @@ type FollowButtonProps = {
   userId: string;
 };
 
-function FollowButton({targetUserId, userId}: FollowButtonProps) {
+function FollowButton({ targetUserId, userId }: FollowButtonProps) {
   const [isLoading, setIsLoading] = useState(false);
-
   const handleFollow = async () => {
     setIsLoading(true);
 
     try {
       await toggleFollow(targetUserId, userId);
-      toast.success("dataBaseCall");
+      toast.success("User Followed Successfully");
     } catch (error) {
       toast.error("Error following user");
-      console.error(error)
+      console.error(error);
     } finally {
       setIsLoading(false);
     }

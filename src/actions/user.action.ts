@@ -2,7 +2,6 @@
 
 import { prisma } from "@/lib/db";
 import { revalidatePath } from "next/cache";
-import { use } from "react";
 
 export async function getUserById(id: string) {
   return prisma.user.findUnique({
