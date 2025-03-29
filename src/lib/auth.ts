@@ -74,7 +74,7 @@ export const authOptions: NextAuthOptions = {
         user: {
           username: token.username,
           id: token.id,
-          image: token.image || 'https://cdn.wallpapersafari.com/81/41/mDOY7h.jpg',
+          image: token.image,
         },
       };
     },

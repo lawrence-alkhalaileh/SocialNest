@@ -183,7 +183,7 @@ export async function createComment(
   }
 }
 
-export async function deletePost(userId: string, postId: string) {
+export async function deletePost(userId: string | null, postId: string) {
   try {
     const post = await prisma.post.findUnique({
       where: { id: postId },

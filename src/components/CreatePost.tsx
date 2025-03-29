@@ -17,6 +17,7 @@ const CreatePost = () => {
   const [imageUrl, setImageUrl] = useState("");
   const [isPosting, setIsPosting] = useState(false);
   const [showImageUpload, setShowImageUpload] = useState(false);
+  console.log(session);
 
   const handleSubmit = async () => {
     if (!content.trim() && !imageUrl) return;
@@ -48,12 +49,7 @@ const CreatePost = () => {
         <div className="space-y-4">
           <div className="flex space-x-4">
             <Avatar className="h-12 w-12 ">
-              <AvatarImage
-                src={
-                  session?.user?.image ||
-                  "https://cdn.wallpapersafari.com/81/41/mDOY7h.jpg"
-                }
-              />
+              <AvatarImage src={session?.user?.image || "/avatar.png"} />
             </Avatar>
             <Textarea
               className="min-h-[100px] resize-none border-none focus-visible:ring-0 p-3 text-base"
