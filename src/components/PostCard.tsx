@@ -11,15 +11,11 @@ import { DeleteAlertDialog } from "./DeleteAlertDialog";
 import { Button } from "./ui/button";
 import {
   HeartIcon,
-  LogInIcon,
   MessageCircleIcon,
   SendIcon,
 } from "lucide-react";
 import { Textarea } from "./ui/textarea";
-import { authOptions } from "@/lib/auth";
-import { getServerSession } from "next-auth";
 import { getUserById } from "@/actions/user.action";
-import UnAuthenticatedSidebar from "./sidebar/UnAuthenticatedSidebar ";
 
 type Post = any;
 
