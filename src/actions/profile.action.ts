@@ -145,7 +145,10 @@ export async function getUserLikedPosts(userId: string) {
   }
 }
 
-export async function updateProfile(formData: FormData, authUserId: string) {
+export async function updateProfile(
+  formData: FormData,
+  authUserId: string | undefined
+) {
   try {
     if (!authUserId) throw new Error("Unauthorized");
 
@@ -172,7 +175,10 @@ export async function updateProfile(formData: FormData, authUserId: string) {
   }
 }
 
-export async function isFollowing(userId: string, authUserId:string) {
+export async function isFollowing(
+  userId: string,
+  authUserId: string | undefined
+) {
   try {
     if (!authUserId) return false;
 
