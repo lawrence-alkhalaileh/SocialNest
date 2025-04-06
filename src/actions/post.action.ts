@@ -3,21 +3,25 @@
 import { prisma } from "@/lib/db";
 import { revalidatePath } from "next/cache";
 
-export async function createPost(id: string, content: string, image: string) {
+export async function createPost(
+  userId: string,
+  content: string,
+  imageUrl?: string
+) {
   try {
-    const post = await prisma.post.create({
+    await prisma.post.create({
       data: {
         content,
-        image,
-        authorId: id,
+        image: imageUrl || null,
+        authorId: userId,
       },
     });
 
     revalidatePath("/");
-    return { success: true, post };
+    return { success: true };
   } catch (error) {
-    console.error("Failed to create post: ", error);
-    return { success: false, message: "Failed to create post!" };
+    console.error(error);
+    return { success: false, message: "Failed to create post" };
   }
 }
 
