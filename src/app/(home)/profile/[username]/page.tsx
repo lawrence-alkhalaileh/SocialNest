@@ -1,7 +1,19 @@
-import { getProfileByUsername } from "@/actions/profile.acion";
+import {
+  getProfileByUsername,
+  getUserLikedPosts,
+  getUserPosts,
+  isFollowing,
+} from "@/actions/profile.action";
+import { notFound } from "next/navigation";
+import ProfilePageClient from "./ProfilePageClient";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
 
-
-export async function generateMetadata({ params }: { params: { username: string } }) {
+export async function generateMetadata({
+  params,
+}: {
+  params: { username: string };
+}) {
   const user = await getProfileByUsername(params.username);
   if (!user) return;
 
@@ -11,11 +23,26 @@ export async function generateMetadata({ params }: { params: { username: string 
   };
 }
 
-const Profile = async ({ params }: { params: { username: string[] } }) => {
-  const { username } = await params;
+async function ProfilePageServer({ params }: { params: { username: string } }) {
+  const session = await getServerSession(authOptions);
+  const authId = session?.user.id;
+  const user = await getProfileByUsername(params.username);
 
-  console.log(username);
-  return <h1>{username}</h1>;
-};
+  if (!user) notFound();
 
-export default Profile;
+  const [posts, likedPosts, isCurrentUserFollowing] = await Promise.all([
+    getUserPosts(user.id),
+    getUserLikedPosts(user.id),
+    isFollowing(user.id, authId),
+  ]);
+
+  return (
+    <ProfilePageClient
+      user={user}
+      posts={posts}
+      likedPosts={likedPosts}
+      isFollowing={isCurrentUserFollowing}
+    />
+  );
+}
+export default ProfilePageServer;
