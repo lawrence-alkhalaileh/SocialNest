@@ -16,9 +16,7 @@ const supportedImageTypes = [
   "image/jpeg",
   "image/png",
   "image/jpg",
-//   "image/gif",
-//   "image/webp",
-//   "image/svg+xml",
+
 ];
 
 export async function uploadFile(formData: FormData) {
