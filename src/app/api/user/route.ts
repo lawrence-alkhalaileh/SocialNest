@@ -15,7 +15,6 @@ export async function POST(req: Request) {
     const body = await req.json();
     const { email, username, name, password } = userSchema.parse(body);
 
-    // 🔍 Check if user exists
     const existingUser = await db.user.findFirst({
       where: {
         OR: [{ email: email }, { username: username }],
@@ -35,10 +34,8 @@ export async function POST(req: Request) {
       );
     }
 
-    // 🔐 Hash password
     const hashedPassword = await hash(password, 10);
 
-    // ✅ Create new user
     const newUser = await db.user.create({
       data: {
         email,
