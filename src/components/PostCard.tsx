@@ -19,13 +19,6 @@ import {
   DropdownMenuItem,
 } from "@/components/ui/dropdown-menu";
 import { MoreHorizontal } from "lucide-react";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
-} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { reportPost } from "@/actions/report.action";
 
@@ -134,6 +127,8 @@ const PostCard = ({
       }
     } catch (error) {
       toast.error("Failed to submit report");
+      setOpenReportDialog(false); // <<< Force close if there's an error
+      setReportReason("");
     } finally {
       setIsReporting(false);
     }
@@ -141,28 +136,48 @@ const PostCard = ({
 
   return (
     <>
-      <Dialog open={openReportDialog} onOpenChange={setOpenReportDialog}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Report Post</DialogTitle>
-          </DialogHeader>
-          <div className="space-y-4">
-            <Input
-              placeholder="Reason for reporting..."
-              value={reportReason}
-              onChange={(e) => setReportReason(e.target.value)}
-            />
+      {openReportDialog && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black/50 z-50">
+          <div className="bg-white dark:bg-gray-900 rounded-lg shadow-lg p-6 w-[90%] max-w-md">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-lg font-semibold">Report Post</h2>
+              <button
+                onClick={() => {
+                  setOpenReportDialog(false);
+                  setReportReason("");
+                }}
+                className="text-gray-400 hover:text-gray-600"
+              >
+                ✕
+              </button>
+            </div>
+            <div className="space-y-4">
+              <Input
+                placeholder="Reason for reporting..."
+                value={reportReason}
+                onChange={(e) => setReportReason(e.target.value)}
+              />
+            </div>
+            <div className="flex justify-end gap-2 mt-6">
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setOpenReportDialog(false);
+                  setReportReason("");
+                }}
+              >
+                Cancel
+              </Button>
+              <Button
+                disabled={isReporting || !reportReason.trim()}
+                onClick={handleReportPost}
+              >
+                {isReporting ? "Reporting..." : "Submit Report"}
+              </Button>
+            </div>
           </div>
-          <DialogFooter className="pt-4">
-            <Button
-              disabled={isReporting || !reportReason.trim()}
-              onClick={handleReportPost}
-            >
-              {isReporting ? "Reporting..." : "Submit Report"}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+        </div>
+      )}
 
       <Card className="overflow-hidden">
         <CardContent className="p-4 sm:p-6">
@@ -174,7 +189,6 @@ const PostCard = ({
                 </Avatar>
               </Link>
 
-              {/* POST HEADER & TEXT CONTENT */}
               <div className="flex-1 min-w-0">
                 <div className="flex items-start justify-between">
                   <div className="flex flex-col sm:flex-row sm:items-center sm:space-x-2 truncate">
@@ -378,84 +392,3 @@ const PostCard = ({
 };
 
 export default PostCard;
-
-{
-  /* <div className="flex items-center pt-3 space-x-2 border-t mt-4">
-  {dbUserId ? (
-    <Button
-      variant="ghost"
-      size="sm"
-      className={`rounded-full transition-colors ${
-        hasLiked
-          ? "text-red-500 hover:text-red-600 hover:bg-red-100"
-          : "text-muted-foreground hover:text-red-500 hover:bg-red-50"
-      }`}
-      onClick={handleLike}
-    >
-      {hasLiked ? (
-        <HeartIcon className="size-4 fill-current mr-1.5" />
-      ) : (
-        <HeartIcon className="size-4 mr-1.5" />
-      )}
-      <span className="text-sm font-medium">{likes}</span>
-    </Button>
-  ) : (
-    <Link href="/login">
-      <Button
-        variant="ghost"
-        size="sm"
-        className="rounded-full text-muted-foreground hover:bg-slate-100 transition-colors"
-      >
-        <HeartIcon className="size-4 mr-1.5" />
-        <span className="text-sm font-medium">{likes}</span>
-      </Button>
-    </Link>
-  )}
-
-  <Button
-    variant="ghost"
-    size="sm"
-    className={`rounded-full transition-colors ${
-      showComments
-        ? "text-blue-500 hover:text-blue-600 hover:bg-blue-100"
-        : "text-muted-foreground hover:text-blue-500 hover:bg-blue-50"
-    }`}
-    onClick={() => setShowComments((prev) => !prev)}
-  >
-    <MessageCircleIcon
-      className={`size-4 mr-1.5 ${
-        showComments ? "fill-blue-500 text-blue-500" : ""
-      }`}
-    />
-    <span className="text-sm font-medium">{post.comments.length}</span>
-  </Button>
-
-  <div className="ml-auto">
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button 
-          variant="ghost" 
-          size="sm" 
-          className="rounded-full h-8 w-8 p-0 hover:bg-slate-100"
-        >
-          <MoreHorizontal className="size-4" />
-          <span className="sr-only">More options</span>
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-48">
-        <DropdownMenuItem 
-          onClick={() => setOpenReportDialog(true)}
-          className="cursor-pointer flex items-center"
-        >
-          <FlagIcon className="size-4 mr-2 text-muted-foreground" />
-          <span>Report post</span>
-        </DropdownMenuItem>
-        <DropdownMenuItem className="cursor-pointer flex items-center">
-          <ShareIcon className="size-4 mr-2 text-muted-foreground" />
-          <span>Share post</span>
-        </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
-  </div>
-</div> */
-}

@@ -29,7 +29,7 @@ async function DesktopNavbar() {
             </Link>
           </Button>
           <Button variant="ghost" className="flex items-center gap-2" asChild>
-            <Link href={`/profile/${session.user.username}`}>
+            <Link href={`profile/${session.user.username}`}>
               <UserIcon className="w-4 h-4" />
               <span className="hidden lg:inline">Profile</span>
             </Link>
