@@ -1,6 +1,7 @@
 import { getPosts } from "@/actions/post.action";
 import { getUserById } from "@/actions/user.action";
 import CreatePost from "@/components/CreatePost";
+import Dashboard from "@/components/Dashboard";
 import PostCard from "@/components/PostCard";
 import SuggestUsers from "@/components/SuggestUsers";
 import { authOptions } from "@/lib/auth";

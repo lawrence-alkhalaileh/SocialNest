@@ -130,12 +130,11 @@ enum UserType {
 
 model Report {
   id         String   @id @default(cuid())
-  reporterId String // The user who made the report
-  postId     String // The post being reported
-  reason     String // Why they reported it (optional, you can expand later)
+  reporterId String 
+  postId     String 
+  reason     String 
   createdAt  DateTime @default(now())
 
-  // Relations
   reporter User @relation(fields: [reporterId], references: [id], onDelete: Cascade)
   post     Post @relation(fields: [postId], references: [id], onDelete: Cascade)
 

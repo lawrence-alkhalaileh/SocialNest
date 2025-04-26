@@ -33,7 +33,6 @@ export const authOptions: NextAuthOptions = {
           where: { email: credentials.email },
         });
 
-
         if (!existingUser) {
           throw new Error("No user found with this email.");
         }
@@ -51,7 +50,8 @@ export const authOptions: NextAuthOptions = {
           id: existingUser.id,
           username: existingUser.username,
           email: existingUser.email,
-          image: existingUser.image,
+          image: existingUser.image ?? undefined,
+          role: existingUser.role,
         };
       },
     }),
@@ -64,6 +64,7 @@ export const authOptions: NextAuthOptions = {
           id: user.id,
           username: user.username,
           image: user.image,
+          role: user.role,
         };
       }
       return token;
@@ -75,6 +76,7 @@ export const authOptions: NextAuthOptions = {
           username: token.username,
           id: token.id,
           image: token.image,
+          role: token.role, // <-- added role to session
         },
       };
     },
