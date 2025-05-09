@@ -12,6 +12,7 @@ import { useForm } from "react-hook-form";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { signIn } from "next-auth/react";
 
 const formSchema = z
   .object({
@@ -56,19 +57,26 @@ export function RegisterForm({
       });
 
       if (response.status === 201) {
-        router.push("/login");
+        const res = await signIn("credentials", {
+          redirect: false,
+          email: values.email,
+          password: values.password,
+        });
+
+        if (res?.ok) {
+          router.push("/");
+        } else {
+          toast.error("Auto login failed. Please sign in manually.");
+          router.push("/login");
+        }
       } else {
-        console.error("Registration failed");
+        toast.error("Registration failed. Try again.");
       }
     } catch (error: unknown) {
-      // Ensure error is properly typed as AxiosError
       if (axios.isAxiosError(error)) {
-        console.error(
-          "Registration failed:",
-          error.response?.data?.message || error.message
-        );
+        toast.error(error.response?.data?.message || error.message);
       } else {
-        console.error("Unexpected error:", error);
+        toast.error("Unexpected error occurred.");
       }
     }
   }

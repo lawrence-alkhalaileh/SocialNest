@@ -1,5 +1,3 @@
-// app/dashboard/page.tsx
-
 import { getReports, deletePost } from "@/actions/admin.action";
 import {
   Table,
@@ -12,29 +10,18 @@ import {
 } from "@/components/ui/table";
 import { revalidatePath } from "next/cache";
 import { Button } from "@/components/ui/button";
-import SignOut from "./ui/SignOut";
 import { Card } from "@/components/ui/card";
-
-export default async function Dashboard() {
+import { PostModal } from "@/components/PostModal";
+const Reports = async () => {
   const reports = await getReports();
 
   return (
-    <div className="bg-gray-50 min-h-screen">
-      {/* Header */}
-      <div className="bg-white shadow">
-        <div className="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
-          <h1 className="text-xl font-bold">Admin Dashboard</h1>
-          <SignOut />
-        </div>
-      </div>
-
-      {/* Content */}
+    <div className="min-h-screen">
       <div className="max-w-7xl mx-auto px-4 py-6">
         <Card className="p-6">
           <Table>
             <TableHeader>
-              <TableRow className="bg-gray-100">
-                <TableHead className="w-[100px]">Report ID</TableHead>
+              <TableRow>
                 <TableHead>Reporter Name</TableHead>
                 <TableHead>Poster Name</TableHead>
                 <TableHead>Reason</TableHead>
@@ -44,24 +31,36 @@ export default async function Dashboard() {
             </TableHeader>
             <TableBody>
               {reports.map((report) => (
-                <TableRow key={report.id} className="hover:bg-gray-50">
-                  <TableCell className="font-medium">{report.id}</TableCell>
+                <TableRow key={report.id}>
                   <TableCell>{report.reporter?.name || "Unknown"}</TableCell>
-                  <TableCell>{report.post?.author?.name || "Unknown"}</TableCell>
-                  <TableCell>{report.reason}</TableCell>
                   <TableCell>
+                    {report.post?.author?.name || "Unknown"}
+                  </TableCell>
+                  <TableCell>{report.reason}</TableCell>
+                  <TableCell className="space-x-2">
                     {report.postId && (
-                      <form
-                        action={async () => {
-                          "use server";
-                          await deletePost(report.postId);
-                          revalidatePath("/dashboard");
-                        }}
-                      >
-                        <Button type="submit" variant="destructive" size="sm">
-                          Delete Post
-                        </Button>
-                      </form>
+                      <>
+                        <form
+                          action={async () => {
+                            "use server";
+                            await deletePost(report.postId);
+                            revalidatePath("/dashboard");
+                          }}
+                          style={{ display: "inline" }}
+                        >
+                          <Button type="submit" variant="destructive" size="sm">
+                            Delete Post
+                          </Button>
+                        </form>
+                        {report.post && (
+                          <PostModal
+                            post={{
+                              image: report.post.image ?? undefined,
+                              content: report.post.content ?? undefined,
+                            }}
+                          />
+                        )}
+                      </>
                     )}
                   </TableCell>
                   <TableCell className="text-right">
@@ -72,7 +71,9 @@ export default async function Dashboard() {
             </TableBody>
             <TableFooter>
               <TableRow>
-                <TableCell colSpan={6} className="bg-gray-100">Total Reports: {reports.length}</TableCell>
+                <TableCell colSpan={6}>
+                  Total Reports: {reports.length}
+                </TableCell>
               </TableRow>
             </TableFooter>
           </Table>
@@ -80,4 +81,6 @@ export default async function Dashboard() {
       </div>
     </div>
   );
-}
+};
+
+export default Reports;
