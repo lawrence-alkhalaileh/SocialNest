@@ -24,7 +24,7 @@ export default async function Home() {
 
   const user = await getUserById(session.user.id);
   const posts: any = await getPosts();
-
+  
   return (
     <div className="grid grid-cols-1 lg:grid-cols-10 gap-6">
       <div className="lg:col-span-6">

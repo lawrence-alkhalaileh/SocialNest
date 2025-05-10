@@ -13,6 +13,7 @@ const SuggestUsers = async () => {
   if (session?.user?.id) {
     const id = session.user.id;
     users = await getRandomUsers(id);
+    users = users.filter((el) => el.role != "ADMIN");
   } else {
     return null;
   }
@@ -47,7 +48,7 @@ const SuggestUsers = async () => {
                   </p>
                 </div>
               </div>
-              <FollowButton targetUserId={user.id} userId={session.user.id}/>
+              <FollowButton targetUserId={user.id} userId={session.user.id} />
             </div>
           ))}
         </div>
